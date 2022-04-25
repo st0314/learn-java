@@ -1,15 +1,96 @@
 package vip.grmz.stram;
 
 import org.junit.Test;
+import vip.grmz.lambda2.Employee;
+import vip.grmz.lambda2.EmployeeData;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * 测试Stream的 zhong zhi cao zuo
  */
 public class StreamTest2 {
 
-    //1.pi pei yu cha zhao
+    //1.匹配与查找
     @Test
     public void test1(){
+        List<Employee> list = EmployeeData.getEmployees();
+        //allMatch(Predicate p)   检查是否匹配所有元素
+        boolean b = list.stream().allMatch(e -> e.getAge() > 18);
+        System.out.println(b);
+        //gong zi dou da yu 10000
+        boolean b1 = list.stream().anyMatch(e -> e.getSalary() > 10000);
+        System.out.println(b1);
+
+        //shi fou cun zai xin lei de yuan gong
+        boolean lz = list.stream().noneMatch(e -> e.getName().startsWith("lz"));
+        System.out.println(lz);
+
+        //di yi ge
+        Optional<Employee> first = list.stream().findFirst();
+        System.out.println(first);
+
+        //ref yi de yi ge
+        Optional<Employee> any = list.stream().findAny();
+        System.out.println(any);
+    }
+
+    @Test
+    public void test2(){
+        List<Employee> list = EmployeeData.getEmployees();
+
+        //count()  fan hui liu zhong yuan su de zong ge shu
+        long count = list.stream().filter(e -> e.getSalary() > 5000).count();
+        System.out.println(count);
+        //max(Comparator c)  fan hui liu zhong de zui da zhi
+        //exer: fan hui zui gao de gong zi
+        Stream<Double> salary = list.stream().map(e -> e.getSalary());
+        Optional<Double> max = salary.max(Double::compare);
+        System.out.println(max);
+        //min(Comparator c)   fj hv lq vs de zv xc vi
+        //fan hui gong zi zui di de yuan gong
+        Optional<Employee> employee = list.stream().min((e1, e2) -> Double.compare(e1.getSalary(), e2.getSalary()));
+        System.out.println(employee);
+        System.out.println();
+
+        //forEach(Consumer c)   nei bu die dai
+        list.stream().forEach(System.out::println);
+        //ui ys ji he de bm li ck zo
+        list.forEach(System.out::println);
+
+
+    }
+
+    //hv yt
+    @Test
+    public void test3(){
+        //reduce(T identity, BinaryOperator)   ke yi jd lq vs yr su fj fu jx he qi ll, de dk yi ge vi, fj hv
+        // ji sr ji he vs so yb uu de he
+        List<Integer> list = Arrays.asList(1,2,3,34,4,5,6,7,7,8);
+        Integer reduce = list.stream().reduce(0, Integer::sum);
+        System.out.println(reduce);
+
+        //reduce(BinaryOperator)  ke yi jd lq vs yr su fj fu jx he  qi ll,de dk yi ge vi ,fj hv Optional<T>
+        //exer2: ji sr gs si so yb yr gs gs zi de zs he
+        List<Employee> employees = EmployeeData.getEmployees();
+        Stream<Double> doubleStream = employees.stream().map(Employee::getSalary);
+        Optional<Double> reduce1 = doubleStream.reduce(Double::sum);
+        System.out.println(reduce1);
+
+    }
+
+    //3. shou ji
+    @Test
+    public void test4(){
+        //collect(Collector c)
+
+        List<Employee> list = EmployeeData.getEmployees();
+        List<Employee> collect = list.stream().filter(e -> e.getSalary() > 6000).collect(Collectors.toList());
+        collect.forEach(System.out::println);
 
     }
 
